@@ -1,0 +1,176 @@
+<#@ template language="C#" debug="True" #>
+
+<#@ assembly name="System.Core" #>
+<#@ assembly name="Microsoft.VisualStudio.Shell.Interop.8.0" #>
+<#@ assembly name="EnvDTE" #>
+<#@ assembly name="EnvDTE80" #>
+<#@ assembly name="System.Data" #>
+
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="Microsoft.VisualStudio.Shell.Interop" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Linq" #>
+
+<#@ parameter type="System.String" name="ClassName" #>
+<#@ parameter type="System.Collections.Generic.IDictionary<System.String, System.String>" name="Members" #>
+<#@ parameter type="System.Collections.Generic.IDictionary<System.String, System.String>" name="MemberTypes" #>
+
+<#@ parameter type="EnvDTE.CodeElement" name="CodeElement" #>
+
+
+<# foreach (var item in GetPropertiesWithTypes(CodeElement)) 
+{ 
+#>
+[<#= item.Key #>] [<#= item.Value #>]	NOT NULL,
+<# 
+} 
+#>
+
+DataReaderToModelProvider
+<# foreach (var item in GetPropertiesWithTypes(CodeElement)) 
+{ 
+#>
+<#= LowercaseFirst(item.Key) #>: GetColumnValueFromDbDataReader<<#= item.Value #>>(reader, DataColumnNames.<#= item.Key #>),
+<# 
+} 
+#>
+
+
+<# for (int i = 1; i <= CodeElement.Children.Count; i++) 
+{ 
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+#>
+string <#= LowercaseFirst(CodeElement.Children.Item(i).Name) #>,
+<# 
+		}
+} 
+#>
+
+<# for (int i = 1; i <= CodeElement.Children.Count; i++) 
+{ 
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+#>
+this.<#= LowercaseFirst(CodeElement.Children.Item(i).Name) #> = <#= LowercaseFirst(CodeElement.Children.Item(i).Name) #>;
+<# 
+		}
+} 
+#>
+
+
+<# for (int i = 1; i <= CodeElement.Children.Count; i++) 
+{ 
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+#>
+int expected<#= CodeElement.Children.Item(i).Name #> = 0;
+<# 
+		}
+} 
+#>
+
+<# for (int i = 1; i <= CodeElement.Children.Count; i++) 
+{ 
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+#>
+<#= LowercaseFirst(CodeElement.Children.Item(i).Name) #>: expected<#= CodeElement.Children.Item(i).Name #>,
+<# 
+		}
+} 
+#>
+
+
+
+<# for (int i = 1; i <= CodeElement.Children.Count; i++) 
+{ 
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+#>
+Assert.AreEqual(expected<#= CodeElement.Children.Item(i).Name #>, command.Parameters["@<#= CodeElement.Children.Item(i).Name #>"].Value, @"Command expected parameter ""@<#= CodeElement.Children.Item(i).Name #>"" value does not match");
+<# 
+		}
+} 
+#>
+
+<# foreach (var prop in GetProperties(CodeElement)) { #>
+	public const string <#= prop #>,
+<# } #>
+
+
+DataColumnNames
+<# foreach (var prop in GetProperties(CodeElement)) { #>
+	/// <summary>
+	/// The <#= prop #> constant.
+	/// </summary>
+	public const string <#= prop #> = "<#= prop #>";
+
+<# } #>
+
+<# foreach (var prop in GetProperties(CodeElement)) { #>
+	string <#= prop #> = "@<#= prop #>";
+<# } #>
+
+<# foreach (var prop in GetProperties(CodeElement)) { #>
+	command.AddInParameter(ParameterNames.<#= prop #>, DbType.String, <#= CodeElement.FullName #>.<#= prop #>);
+<# } #>
+
+
+
+
+
+
+<#+
+
+private IList<System.String> GetProperties(EnvDTE.CodeElement element)
+{
+	IList<System.String> props = new List<System.String>();
+	for (int i = 1; i <= CodeElement.Children.Count; i++) 
+	{
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+			props.Add(member.Name);
+		}		
+	}
+	return props;
+}
+
+private IDictionary<System.String, System.String> GetPropertiesWithTypes(EnvDTE.CodeElement element)
+{
+	IDictionary<System.String, System.String> result = new Dictionary<System.String, System.String>();
+	for (int i = 1; i <= CodeElement.Children.Count; i++) 
+	{
+		var member = CodeElement.Children.Item(i);
+		if (member.Kind == vsCMElement.vsCMElementProperty) 
+		{
+			var codeProperty2 = member as CodeProperty2;
+			result.Add(member.Name, codeProperty2 == null ? "" : codeProperty2.Type.AsString);
+		}		
+	}
+	return result;
+}
+
+public static string LowercaseFirst(string input)
+{
+    if (string.IsNullOrEmpty(input))
+    {
+        return string.Empty;
+    }
+
+    char[] result = input.ToCharArray();
+    result[0] = char.ToLower(result[0]);
+
+    return new string(result);
+}
+#>
