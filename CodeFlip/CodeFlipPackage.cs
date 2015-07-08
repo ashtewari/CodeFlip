@@ -38,6 +38,7 @@ namespace AshTewari.CodeFlip
     public sealed class CodeFlipPackage : Package
     {
         private DTE2 dte;
+        private readonly Utils utils;
 
         /// <summary>
         /// Default constructor of the package.
@@ -49,8 +50,11 @@ namespace AshTewari.CodeFlip
         public CodeFlipPackage()
         {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
+            this.utils = new Utils();
+            //// ToDo: Sample template
+            //// ToDo: Including packaged t4 files in user templates
+            //// ToDo: Referencing CodeFlip.dll in user templates
         }
-
 
 
         /////////////////////////////////////////////////////////////////////////////
@@ -68,8 +72,10 @@ namespace AshTewari.CodeFlip
 
             dte = (DTE2)GetService(typeof(DTE));
 
-            LoadDefaultTemplates();
-
+            this.utils.LoadDefaultTemplates();
+            //// ToDo: Dynamic sub menu commands to execute included templates
+            
+            
             // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -79,16 +85,8 @@ namespace AshTewari.CodeFlip
                 MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID );
                 mcs.AddCommand( menuItem );
             }
-        }
-
-        private void LoadDefaultTemplates()
-        {
-            var templatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Templates");
-            var files = Directory.GetFiles(templatesFolder);
-            foreach (var file in files)
-            {
-                Debug.WriteLine(file);
-            }
+            //// ToDo: Command to select a specific template using FileOpen dialog
+            //// ToDo: Allow template selection from a list
         }
 
         #endregion

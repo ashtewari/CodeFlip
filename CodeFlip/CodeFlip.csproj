@@ -62,6 +62,7 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.12.0" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.11.0, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextTemplating.VSHost.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -129,6 +130,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeFlipCustomHost.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -141,6 +143,7 @@
     <Compile Include="PkgCmdID.cs" />
     <Compile Include="RunT4Callback.cs" />
     <Compile Include="Transformer.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -157,7 +160,8 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Templates\GenerateCommand.tt">
+    <Content Include="Templates\SampleTemplate.tt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>

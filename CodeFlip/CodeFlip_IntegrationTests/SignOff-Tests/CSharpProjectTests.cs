@@ -69,13 +69,6 @@ namespace CodeFlip_IntegrationTests.IntegrationTests
                 //Create Winforms application project
                 //TestUtils.CreateProjectFromTemplate("MyWindowsApp", "Windows Application", "CSharp", false);
                 //Assert.AreEqual<int>(1, TestUtils.ProjectCount());
-
-                //TODO Verify that we can debug launch the application
-
-                //TODO Set Break point and verify that will hit
-
-                //TODO Verify Adding new project item to project
-
             });
         }
 
