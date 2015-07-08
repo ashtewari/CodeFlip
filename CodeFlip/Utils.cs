@@ -42,6 +42,30 @@ namespace AshTewari.CodeFlip
             return result;
         }
 
+        public static IList<System.String> GetFields(EnvDTE.CodeElement element)
+        {
+            IList<System.String> props = new List<System.String>();
+            for (int i = 1; i <= element.Children.Count; i++)
+            {
+                var member = element.Children.Item(i);
+                if (member.Kind == vsCMElement.vsCMElementVariable)
+                {
+                    props.Add(member.Name);
+                }
+            }
+            return props;
+        }
+
+        public static string TrimTrailingChars(string input, int howMany)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return string.Empty;
+            }
+
+            return input.Substring(0, input.Length - howMany);
+        }
+
         public static string LowercaseFirst(string input)
         {
             if (string.IsNullOrEmpty(input))
